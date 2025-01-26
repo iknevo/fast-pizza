@@ -51,6 +51,7 @@ function Order() {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export async function orderLoader({ params }) {
   const order = await getOrder(params.orderId);
   return order;

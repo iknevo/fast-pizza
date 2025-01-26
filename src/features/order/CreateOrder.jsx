@@ -103,7 +103,6 @@ export async function orderAction({ request }) {
   if (Object.keys(errors).length > 0) return errors;
   // if everything is okay place a new order and redirect
   const newOrder = await createOrder(order);
-  console.log(newOrder);
   return redirect(`/order/${newOrder.id}`);
 }
 
