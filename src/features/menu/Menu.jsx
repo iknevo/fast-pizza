@@ -14,6 +14,7 @@ function Menu() {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export async function menuLoader() {
   const menu = await getMenu();
   return menu;
