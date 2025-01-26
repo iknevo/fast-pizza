@@ -4,7 +4,7 @@ import MenuItem from "./MenuItem";
 
 function Menu() {
   const menu = useLoaderData();
-  console.log(menu);
+  // console.log(menu);
   return (
     <ul>
       {menu.map((pizza) => (
@@ -14,7 +14,7 @@ function Menu() {
   );
 }
 
-export async function loader() {
+export async function menuLoader() {
   const menu = await getMenu();
   return menu;
 }
