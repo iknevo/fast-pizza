@@ -4,7 +4,7 @@ import { createOrder } from "../../services/apiRestaurant";
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str) =>
   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
-    str
+    str,
   );
 
 const fakeCart = [
@@ -45,13 +45,25 @@ function CreateOrder() {
       <Form method="POST">
         <div>
           <label>First Name</label>
-          <input type="text" name="customer" required />
+          <input
+            className="form_input"
+            type="text"
+            placeholder="Enter your name"
+            name="customer"
+            required
+          />
         </div>
 
         <div>
           <label>Phone number</label>
           <div>
-            <input type="tel" name="phone" required />
+            <input
+              className="form_input"
+              placeholder="Enter a valid phone number"
+              type="tel"
+              name="phone"
+              required
+            />
           </div>
           {formErrors?.phone && <p>{formErrors.phone}</p>}
         </div>
@@ -59,7 +71,13 @@ function CreateOrder() {
         <div>
           <label>Address</label>
           <div>
-            <input type="text" name="address" required />
+            <input
+              className="form_input"
+              placeholder="Enter your address"
+              type="text"
+              name="address"
+              required
+            />
           </div>
         </div>
 
@@ -77,7 +95,10 @@ function CreateOrder() {
         <div>
           {/* hidden input to submit the cart info with the request */}
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />
-          <button disabled={submitting}>
+          <button
+            disabled={submitting}
+            className="inline-block cursor-pointer rounded-full bg-yellow-400 px-3 py-4 font-semibold tracking-wide text-stone-800 uppercase transition-colors duration-300 hover:bg-yellow-300 focus:bg-yellow-300 focus:ring focus:ring-yellow-300 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed"
+          >
             {submitting ? "Placing Order..." : "Order now"}
           </button>
         </div>
