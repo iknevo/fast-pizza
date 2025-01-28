@@ -1,4 +1,6 @@
+/* eslint-disable react/prop-types */
 import { Link, useNavigate } from "react-router-dom";
+// console.log(cart);
 
 export default function LinkButton({ children, to }) {
   const navigate = useNavigate();

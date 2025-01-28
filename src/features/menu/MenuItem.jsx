@@ -1,9 +1,25 @@
 /* eslint-disable react/prop-types */
+import { useDispatch, useSelector } from "react-redux";
 import { formatCurrency } from "../../utils/helpers";
 import Button from "./../../ui/Button.jsx";
+import { addItem } from "../cart/cartSlice.js";
 
 function MenuItem({ pizza }) {
   const { id, name, unitPrice, ingredients, soldOut, imageUrl } = pizza;
+  const dispatch = useDispatch();
+  const { cart } = useSelector((store) => store.cart);
+
+  function handleAddToCart() {
+    const newPizzaItem = {
+      pizzaId: id,
+      name,
+      quantity: 1,
+      unitPrice,
+      totalPrice: unitPrice * 1,
+    };
+    if (cart.map((item) => item.pizzaId).includes(newPizzaItem.pizzaId)) return;
+    dispatch(addItem(newPizzaItem));
+  }
 
   return (
     <li className="flex gap-4 pt-2 pb-0 md:pb-2">
@@ -23,7 +39,11 @@ function MenuItem({ pizza }) {
           ) : (
             <p className="font-medium text-stone-500 uppercase">Sold out</p>
           )}
-          <Button type="small">Add to cart</Button>
+          {!soldOut && (
+            <Button type="small" onClick={handleAddToCart}>
+              Add to cart
+            </Button>
+          )}
         </div>
       </div>
     </li>
