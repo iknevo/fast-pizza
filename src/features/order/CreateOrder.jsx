@@ -37,7 +37,6 @@ function CreateOrder() {
   const cart = fakeCart;
   const submitting = useNavigation().state === "submitting";
   const formErrors = useActionData();
-  console.log(formErrors);
 
   return (
     <div className="px-4 py-6">
@@ -46,10 +45,10 @@ function CreateOrder() {
       </h2>
 
       <Form method="POST">
-        <div>
-          <label>First Name</label>
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+          <label className="sm:basis-40">First Name</label>
           <input
-            className="form_input"
+            className="form_input grow"
             type="text"
             placeholder="Enter your name"
             name="customer"
@@ -57,25 +56,31 @@ function CreateOrder() {
           />
         </div>
 
-        <div>
-          <label>Phone number</label>
-          <div>
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+          <label className="sm:basis-40">Phone number</label>
+          <div className="grow">
             <input
-              className="form_input"
+              className="form_input w-full"
               placeholder="Enter a valid phone number"
               type="tel"
               name="phone"
               required
             />
           </div>
-          {formErrors?.phone && <p>{formErrors.phone}</p>}
+        </div>
+        <div className="mb-5 flex justify-end">
+          {formErrors?.phone && (
+            <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700">
+              {formErrors.phone}
+            </p>
+          )}
         </div>
 
-        <div>
-          <label>Address</label>
-          <div>
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+          <label className="sm:basis-40">Address</label>
+          <div className="grow">
             <input
-              className="form_input"
+              className="form_input w-full"
               placeholder="Enter your address"
               type="text"
               name="address"
@@ -84,7 +89,7 @@ function CreateOrder() {
           </div>
         </div>
 
-        <div>
+        <div className="mb-12 flex items-center gap-5">
           <input
             className="h-6 w-6 accent-yellow-400 focus:ring focus:ring-yellow-400 focus:ring-offset-2 focus:outline-none"
             type="checkbox"
@@ -93,7 +98,9 @@ function CreateOrder() {
             // value={withPriority}
             // onChange={(e) => setWithPriority(e.target.checked)}
           />
-          <label htmlFor="priority">Want to yo give your order priority?</label>
+          <label className="cursor-pointer font-medium" htmlFor="priority">
+            Want to yo give your order priority?
+          </label>
         </div>
 
         <div>
@@ -120,7 +127,7 @@ export async function orderAction({ request }) {
   const errors = {};
   if (!isValidPhone(order.phone))
     errors.phone =
-      "Invalid phone number, Please give us your valid number. We might need it to contact you.";
+      "Please give us your correct phone number. We might need it to contact you.";
 
   if (Object.keys(errors).length > 0) return errors;
   // if everything is okay place a new order and redirect
