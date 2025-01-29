@@ -1,9 +1,9 @@
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import { createOrder } from "../../services/apiRestaurant";
 import Button from "../../ui/Button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { clearCart, getCart, getTotalCartPrice } from "../cart/cartSlice";
-import { getUser } from "../user/userSlice";
+import { fetchAddress } from "../user/userSlice";
 import EmptyCart from "./../cart/EmptyCart";
 import store from "./../../store";
 import { formatCurrency } from "./../../utils/helpers";
@@ -20,10 +20,18 @@ function CreateOrder() {
   const cart = useSelector(getCart);
   const submitting = useNavigation().state === "submitting";
   const formErrors = useActionData();
-  const userName = useSelector(getUser);
+  const {
+    userName,
+    status: addressStatus,
+    error: addressError,
+    position,
+    address,
+  } = useSelector((store) => store.user);
+  const isLoadingAddress = addressStatus === "loading";
   const cartPrice = useSelector(getTotalCartPrice);
   const priorityPrice = withPriority ? cartPrice * 0.2 : 0;
   const totalPrice = cartPrice + priorityPrice;
+  const dispatch = useDispatch();
 
   if (!cart.length) return <EmptyCart />;
 
@@ -40,7 +48,6 @@ function CreateOrder() {
             className="form_input grow"
             type="text"
             defaultValue={userName}
-            placeholder="Enter your name"
             name="customer"
             required
           />
@@ -51,32 +58,54 @@ function CreateOrder() {
           <div className="grow">
             <input
               className="form_input w-full"
-              placeholder="Enter a valid phone number"
               type="tel"
               name="phone"
               required
             />
           </div>
         </div>
-        <div className="mb-5 flex justify-end">
-          {formErrors?.phone && (
+        {formErrors?.phone && (
+          <div className="mb-5 flex justify-end">
             <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700">
               {formErrors.phone}
             </p>
-          )}
-        </div>
+          </div>
+        )}
 
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="relative mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">Address</label>
           <div className="grow">
             <input
               className="form_input w-full"
-              placeholder="Enter your address"
               type="text"
               name="address"
+              disabled={isLoadingAddress}
+              defaultValue={address}
               required
             />
+
+            {addressStatus === "error" && (
+              <div className="mb-5">
+                <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700">
+                  {addressError}
+                </p>
+              </div>
+            )}
           </div>
+          {!position.latitiude && !position.longitude && !addressError && (
+            <span className="absolute right-[3px] bottom-[3px] z-50 sm:top-[4px]">
+              <Button
+                disabled={isLoadingAddress}
+                type="small"
+                onClick={(e) => {
+                  e.preventDefault();
+                  dispatch(fetchAddress());
+                }}
+              >
+                Get Position
+              </Button>
+            </span>
+          )}
         </div>
 
         <div className="mb-12 flex items-center gap-5">
@@ -96,7 +125,16 @@ function CreateOrder() {
         <div>
           {/* hidden input to submit the cart info with the request */}
           <input type="hidden" name="cart" value={JSON.stringify(cart)} />
-          <Button disabled={submitting} type="primary">
+          <input
+            type="hidden"
+            name="position"
+            value={
+              position.latitude && position.longitude
+                ? `${position.latitude} , ${position.longitude}`
+                : ""
+            }
+          />
+          <Button disabled={submitting || isLoadingAddress} type="primary">
             {submitting
               ? "Placing Order..."
               : `Order now for ${formatCurrency(totalPrice)}`}
