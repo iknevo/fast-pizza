@@ -13,8 +13,7 @@ function Menu() {
   );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
-export async function menuLoader() {
+export async function loader() {
   const menu = await getMenu();
   return menu;
 }
